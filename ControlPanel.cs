@@ -16,7 +16,7 @@ namespace Gow_Browser_GUI
     public partial class ControlPanel : Form
     {
         public string exec = "";
-        public string filePath, port, gowver, playstation, encoding,method = "";
+        public string filePath, port, gowver, playstation, encoding,method,selectedpath = "";
         bool noterror = true;
         private CancellationTokenSource cancellationTokenSource;
 
@@ -35,9 +35,12 @@ namespace Gow_Browser_GUI
             textBox5.Enabled = true;
             comboBox1.Enabled = true;
             button1.Enabled = true;
+            
             radioButton1.Enabled = true;
             radioButton2.Enabled = true;
             radioButton3.Enabled = true;
+            radioButton4.Enabled = true;
+            button5.Enabled = radioButton4.Checked;
             AppendTextToTextBox("Process Stopped!");
             return;
         }
@@ -136,6 +139,9 @@ namespace Gow_Browser_GUI
             }else if (radioButton3.Checked)
             {
                 method = "-toc";
+            }else if (radioButton4.Checked)
+            {
+                method = "-dir";
             }
             #endregion
             //await RunCommandAsync("taskkill /f /im gow.exe", cancellationTokenSource.Token);
@@ -157,9 +163,11 @@ namespace Gow_Browser_GUI
             textBox5.Enabled = false;
             comboBox1.Enabled = false;
             button1.Enabled = false;
+            button5.Enabled = false;
             radioButton1 .Enabled = false;
             radioButton2.Enabled = false;
             radioButton3.Enabled = false;
+            radioButton4.Enabled = false;
             #endregion
             AppendTextToTextBox(command);
             await RunCommandAsync(command, cancellationTokenSource.Token);
@@ -191,6 +199,21 @@ namespace Gow_Browser_GUI
             System.Diagnostics.Process.Start(url);
         }
 
+        private void radioButton4_CheckedChanged(object sender, EventArgs e)
+        {
+            button5.Enabled = radioButton4.Checked;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+            {
+                // Get the selected folder path
+                selectedpath = folderBrowserDialog1.SelectedPath;
+                textBox2.Text = selectedpath;
+            }
+        }
+
         private void button4_Click(object sender, EventArgs e)
         {
             Process.Start($"http://127.0.0.1:{port}");
@@ -199,6 +222,7 @@ namespace Gow_Browser_GUI
         //STOP
         private void button3_Click(object sender, EventArgs e)
         {
+
             LogCheck();
             cancellationTokenSource?.Cancel();
         }
